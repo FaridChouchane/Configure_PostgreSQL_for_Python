@@ -17,5 +17,5 @@ pip install psycopg2-binary
 Appel de la librairie psycopg2 dans Python
 
 ```python
-
+import psycopg2
 ```
