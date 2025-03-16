@@ -19,3 +19,12 @@ Appel de la librairie psycopg2 dans Python
 ```python
 import psycopg2
 ```
+Connection à la base de données
+
+```python
+conn = psycopg2.connect(database = "postgresql",  # nom par defaut
+                        user = "postgresql", # nom par defaut
+                        host= 'localhost',
+                        password = "password,
+                        port = 5432) # port par defaut
+```
