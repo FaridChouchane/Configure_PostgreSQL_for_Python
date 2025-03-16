@@ -24,7 +24,9 @@ Appel de la librairie psycopg2 dans Python
 ```python
 import psycopg2
 ```
-Connection à la base de données
+Connection à la base de données ### PYTHON <==> POSTGRESQL ###
+
+Pour permettre Python d'interagir avec PostgreSQL, nous devons créer une connection entre eux, et cela se fait avec la fonction psycopg2 ".connect()"
 
 ```python
 conn = psycopg2.connect(database = "postgresql",  # nom par defaut
@@ -34,13 +36,27 @@ conn = psycopg2.connect(database = "postgresql",  # nom par defaut
                         port = 5432) # port par defaut
 ```
 
+Les paramètres de connexion de base requis sont :
+
+- database. Nom de la base de données.
+- user. Nom d'utilisateur requis pour l'authentification.
+- host (hôte). Adresse du serveur de base de données (dans notre cas, la base de données est hébergée localement, mais il pourrait s'agir d'une adresse IP).
+- password. Mot de passe utilisé pour l'authentification.
+- port. Numéro de port de connexion (par défaut : 5432 s'il n'est pas fourni).
+
+
+Créer une table dans PostGreSQL
+
+Nous allons créer une table du projet Yellow taxis trips, avec le schémla suivant :
+
 
 
 
 
 
 Annexes :
-
+- Documentation psycopg2 :
+https://www.psycopg.org/docs/install.html#install-from-source
 
 - Ressources SQL sur le site officiel de PostgreSQL :
 https://www.postgresql.org/about/
