@@ -1,0 +1,392 @@
+Using PostgreSQL in Python
+Discover how to create, connect to and manage PostgreSQL databases using Python’s psycopg2 package.
+Updated Mar 31, 2023
+ · 14 min read
+Contents
+Understanding PostgreSQL
+Understanding psycopg2
+Connecting Python to PostgreSQL
+Creating a table in PostgreSQL
+Executing Basic PostgreSQL Queries in Python
+Advanced PostgreSQL Queries in Python
+Getting Started with SQLAlchemy
+Using PostgreSQL in DataCamp DataLab
+Conclusion
+Data is at the heart of nearly every digital application you can think of. From mobile apps and computer games to banking tools and autonomous vehicles, everything is based on data. Where is all this data stored? The answer is databases. 
+
+A database is an organized collection of structured data, typically stored electronically in a computer system. Despite the recent development of new types of databases (designed to address the increasing volume and variability of data), a considerable amount of data around the world is still stored in what are known as relational databases. Relational databases store data as collections of predefined tables with rows and columns that are connected through one or more relationships. 
+
+Being able to wrangle and extract data from these databases is an essential skill within the data industry and is a skill in increasing demand. The standard way to create and manage databases is SQL (Structured Query Language). SQL is the building block for some of the most popular relational databases on the market, such as PostgreSQL, Microsoft SQL Server, MySQL, and SQLite
+
+In this tutorial, we will focus on PostgreSQL-based databases and how you can create, connect to, and manage them using Python. The SQL-Python tandem is one of the must-have skills you should master through your data science journey. To connect Python with PostgreSQL, we will use the psycopg2 package, the most popular PostgreSQL database adapter for Python. Ready for the challenge? Let’s get started!
+
+Understanding PostgreSQL
+PostgreSQL is a lightweight, free, and open-source relational database. Because of its proven architecture, reliability, data integrity, and smooth integration with other popular programming languages, such as Python and R, PostgreSQL is extremely well accepted by the industry, with companies of all sizes and regions using it. 
+
+PostgreSQL uses and extends the SQL language combined with many features that safely store and scale the most complicated data workloads. 
+
+To start using PostgreSQL, you first have to install it on your computer first. On the PostgreSQL official site, you can find the many ready-to-use packages and installers of PostgreSQL and a source code archive available for different platforms and use cases.
+
+For this tutorial, we will use Postgres App, a simple, native macOS app that includes all the features required to get started with PostgreSQL, but keep in mind that all other available packages are equally valid, and the PostgreSQL syntax to run queries is the same across packages.
+
+If you want to know more about PostgreSQL, check out our Beginner's Guide to PostgreSQL and the good number of SQL courses.
+
+Understanding psycopg2
+In order to connect to a database that is already created in your system or on the Internet, you will have to instruct Python how to detect it. In other words, you will have to tell Python the database of your interest is a PostgreSQL database. 
+
+In Python, you have several options that you can choose from. In this case, we will use psycopg2, probably the most popular PostgreSQL database adapter for Python. Psycopg2 requires a few prerequisites to work properly on your computer. Once you have installed them (read the documentation for more information), you can install psycopg2 just like any other Python packages:
+
+
+pip install psycopg2
+
+Powered By 
+However, if you want to use psycopg2 straightforwardly, you could also install psycopg2-binary, a stand-alone version of the package, not requiring a compiler or external libraries. This is the preferred installation for new users.
+
+
+pip install psycopg2-binary
+
+Powered By 
+Finally, if you are using Python in a Conda environment, you should install psycopg2 using the Anaconda installation:
+
+
+conda install -c anaconda psycopg2
+
+Powered By 
+Now that you’re all set, let’s create your first connection to your PostgreSQL session with psycopg2!
+
+Connecting Python to PostgreSQL
+In order to use Python to interact with a PostgreSQL database, we need to make a connection. This is done with the psycopg2 connect() function, which creates a new database session and returns a new connection instance.
+
+For this tutorial, we will connect with a database called “datacamp_courses” that is hosted locally. 
+
+
+conn = psycopg2.connect(database = "datacamp_courses", 
+                        user = "datacamp", 
+                        host= 'localhost',
+                        password = "postgresql_tutorial",
+                        port = 5432)
+
+Powered By 
+The basic connection parameters required are:
+
+database. The database name.
+user. User name required to authenticate.
+password. Password used to authenticate.
+host. Database server address (in our case, the database is hosted locally, but it could be an IP address).
+port. Connection port number (defaults to 5432 if not provided).
+Creating a table in PostgreSQL
+It’s time to create your first table in the “datacamp_courses” database. We want to create a table with information about some of the courses in the DataCamp course catalog. The table has the following schema: 
+
+DataCam courses table
+
+The specification gives us quite a bit of information on the table's columns. The table's primary key should be course_id (note that only this one is bold), and its data type should be an integer. A primary key is a constraint that enforces the column values to be non-null and unique. It lets you uniquely identify a specific or a set of instances present in the table. 
+
+The remaining columns provide information about the course name, the name of the course instruction, and the topic of the course.
+
+Before creating the table, it’s important to explain how the connection instance you’ve just created works. In essence, the connection encapsulates a database session, and it allows you to execute SQL commands and queries, such as SELECT, INSERT, CREATE, UPDATE, OR DELETE, using the cursor() method, and to make changes persistent using the commit() method. 
+
+Once you have created the cursor instance, you can send commands to the database using the execute() method and retrieve data from a table using fetchone(), fetchmany(), or fetchall().
+
+Finally, it’s important to close the cursor and the connection to the database whenever you’ve finished your operations. Otherwise, they will continue to hold server-side resources. To do so, you can use the close() method.
+
+Below you can find the code to create the datacamp_courses table:
+
+
+# Open a cursor to perform database operations
+cur = conn.cursor()
+# Execute a command: create datacamp_courses table
+cur.execute("""CREATE TABLE datacamp_courses(
+            course_id SERIAL PRIMARY KEY,
+            course_name VARCHAR (50) UNIQUE NOT NULL,
+            course_instructor VARCHAR (100) NOT NULL,
+            topic VARCHAR (20) NOT NULL);
+            """)
+# Make the changes to the database persistent
+conn.commit()
+# Close cursor and communication with the database
+cur.close()
+conn.close()
+
+Powered By 
+This is a very basic example on how to create tables on PostgreSQL, but things can get much more complex. If you want to learn more about how to create a PostgreSQL database and explore the structure, data types, and how to normalize databases, check out our Creating PostgreSQL Database course.
+
+Executing Basic PostgreSQL Queries in Python
+The datacamp_courses table is ready; now it’s time to use SQL to perform some basic queries!
+
+INSERT 
+You may have noticed that the table has no values so far. To create records in the datacamp_courses table, we need the INSERT command.
+
+
+cur = conn.cursor()
+
+cur.execute("INSERT INTO datacamp_courses(course_name, course_instructor, topic) VALUES('Introduction to SQL','Izzy Weber','Julia')");
+
+cur.execute("INSERT INTO datacamp_courses(course_name, course_instructor, topic) VALUES('Analyzing Survey Data in Python','EbunOluwa Andrew','Python')");
+
+cur.execute("INSERT INTO datacamp_courses(course_name, course_instructor, topic) VALUES('Introduction to ChatGPT','James Chapman','Theory')");
+
+cur.execute("INSERT INTO datacamp_courses(course_name, course_instructor, topic) VALUES('Introduction to Statistics in R','Maggie Matsui','R')");
+
+cur.execute("INSERT INTO datacamp_courses(course_name, course_instructor, topic) VALUES('Hypothesis Testing in Python','James Chapman','Python')");
+
+conn.commit()
+cur.close()
+conn.close()
+
+Powered By 
+The resulting table looks like this:
+
+course_id
+
+course_name
+
+course_instructor
+
+topic
+
+1
+
+Introduction to SQL
+
+Izzy Weber
+
+Julia
+
+2
+
+Analyzing Survey Data in Python
+
+EbunOluwa Andrew
+
+Python
+
+3
+
+Introduction to ChatGPT
+
+James Chapman
+
+Theory
+
+4
+
+Introduction to Statistics in R
+
+Maggie Matsui
+
+R
+
+5
+
+Hypothesis Testing in Python
+
+James Chapman
+
+Python
+
+SELECT 
+Reading data in SQL databases is probably something you will do a lot in your data science journey. This is generally called a SELECT query. For now, let's see how the table datacamp_courses is holding up.
+
+We will call the classic SELECT * FROM database_name statement to read all the data available on the table. Then, we will use the fetchall() method to fetch all the available rows. Notice that PostgreSQL automatically creates a numerical index for the course_id column. 
+
+
+cur = conn.cursor()
+cur.execute('SELECT * FROM datacamp_courses;')
+rows = cur.fetchall()
+conn.commit()
+conn.close()
+for row in rows:
+    print(row)
+
+Powered By 
+
+(1, 'Introduction to SQL', 'Izzy Weber', 'Julia')
+(2, 'Analyzing Survey Data in Python', 'EbunOluwa Andrew', 'Python')
+(3, 'Introduction to ChatGPT', 'James Chapman', 'Theory')
+(4, 'Introduction to Statistics in R', 'Maggie Matsui', 'R')
+(5, 'Hypothesis Testing in Python', 'James Chapman', 'Python')
+
+Powered By 
+UPDATE 
+Data often comes with errors. You may have noticed in the previous section that the topic associated with the course “Introduction to SQL” is Julia. After checking the information about the course, we discovered the mistake. We need to change it and write “SQL” instead. This can be done with the UPDATE statement, as follows:
+
+
+cur = conn.cursor()
+cur.execute("UPDATE datacamp_courses SET topic = 'SQL' WHERE course_name = 'Introduction to SQL';")
+conn.commit()
+conn.close()
+
+Powered By 
+DELETE 
+Finally, you may want to delete one of the records in your table. For example, let’s delete the course Introduction to Statistics in R:
+
+
+cur = conn.cursor()
+cur.execute("""DELETE from datacamp_courses WHERE course_name = 'Introduction to Statistics in R'""");
+conn.commit()
+cur.close()
+
+Powered By 
+Advanced PostgreSQL Queries in Python
+In the previous section, we examined the most basic SQL queries. But there’s much to learn. Let’s see some more advanced queries.
+
+ORDER BY
+Say you want to sort your database by the name of the instructor. You can use the ORDER BY statement:
+
+
+cur = conn.cursor()
+
+cur.execute('SELECT * FROM datacamp_courses ORDER BY course_instructor')
+rows = cur.fetchall()
+for row in rows:
+    print(row)
+
+Powered By 
+
+(2, 'Analyzing Survey Data in Python', 'EbunOluwa Andrew', 'Python')
+(1, 'Introduction to SQL', 'Izzy Weber', 'SQL')
+(3, 'Introduction to ChatGPT', 'James Chapman', 'Theory')
+(4, 'Hypothesis Testing in Python', 'James Chapman', 'Python')
+
+Powered By 
+GROUP BY
+You may want to perform some aggregate functions within different groups of data. For example, you may be interested in calculating the number of courses by the different course instructors. You can do this kind of operation with the GROUP BY function.
+
+
+cur = conn.cursor()
+cur.execute('SELECT course_instructor, COUNT(*) FROM datacamp_courses GROUP BY course_instructor')
+rows = cur.fetchall()
+for row in rows:
+    print(row)
+
+Powered By 
+
+('James Chapman', 2)
+('Izzy Weber', 1)
+('EbunOluwa Andrew', 1)
+
+Powered By 
+JOIN
+Up to this point, we’ve only worked with the datacamp_course table. But you only start leveraging the full potential of relational databases, like PostgreSQL, when you work with multiple tables at once. 
+
+The magic tool to combine multiple tables is the JOIN operation. Imagine that we have a second table in our database called programming_languages that contains basic information about the top programming languages for data science, including the name, the position in the TIOBE Index, and the number of courses about the programming language in Datacamp. The table looks like this:
+
+language_id
+
+language_name
+
+course_number
+
+tiobe_ranking
+
+1
+
+SQL
+
+31
+
+8
+
+2
+
+Python
+
+157
+
+1
+
+3
+
+R
+
+132
+
+16
+
+4
+
+Julia
+
+2
+
+33
+
+5
+
+Scala
+
+1
+
+38
+
+Imagine you want to merge the two tables to get the information of the courses, together with the position of the language on the TIOBE index. We will use an INNER JOIN to get only the information of the programming languages that appear in the datacamp_course table. 
+
+
+cur = conn.cursor()
+cur.execute("""SELECT course_name, course_instructor, topic, tiobe_ranking
+FROM datacamp_courses
+INNER JOIN programming_languages
+ON datacamp_courses.topic = programming_languages.language_name""")
+rows = cur.fetchall()
+for row in rows:
+    print(row)
+
+Powered By 
+
+('Introduction to SQL', 'Izzy Weber', 'SQL', 8)
+('Analyzing Survey Data in Python', 'EbunOluwa Andrew', 'Python', 1)
+('Hypothesis Testing in Python', 'James Chapman', 'Python', 1)
+
+Powered By 
+This is just one example, but the potential of SQL JOINS is endless, making it a must-know topic. Our course, tutorial, and cheatsheet on JOINS will help you get started.
+
+Getting Started with SQLAlchemy
+Psycopg2 is a great tool to connect with PostgreSQL databases. But what if you have to work with databases hosted in different SQL databases, such as Oracle and MySQL? In these scenarios, it may be better to use a tool that can connect to different types of SQL databases. To do so, SQLAlchemy is a great candidate. 
+
+In simple words, SQLAlchemy allows users to connect databases using Python language, run SQL queries using object-based programming, and streamline the workflow. 
+
+While the syntax varies compared to psycopg2, you can do pretty much the same. Below you can find an example on to create an engine to connect with our datacamp_courses datasets, and read all the data available in the datacap_course table
+
+
+import sqlalchemy as db
+
+
+engine = db.create_engine("postgresql://datacamp@localhost:5432/datacamp_courses")
+conn = engine.connect() 
+output = conn.execute("SELECT * FROM datacamp_courses")
+print(output.fetchall())
+conn.close()
+
+Powered By 
+
+[(3, 'Introduction to ChatGPT', 'James Chapman', 'Theory'),
+ (5, 'Hypothesis Testing in Python', 'James Chapman', 'Python'),
+ (2, 'Analyzing Survey Data in Python', 'EbunOluwa Andrew', 'Python'),
+ (1, 'Introduction to SQL', 'Izzy Weber', 'SQL')]
+
+Powered By 
+SQLAlchemy is another great tool worth learning. To get a glimpse of how the tool works, have a look at our SQLALchemy Tutorial.  
+
+Using PostgreSQL in DataCamp DataLab
+At DataCamp, we work hard to make data science easier and accessible to everyone. That was the reason behind the creation of DataCamp DataLab, a cloud-based notebook specifically designed for data science. You can think of DataCamp DataLab as a mix between Jupyter Notebook and Google Docs which allows users to write code, analyze data individually or collectively, and share data insights.
+
+Connecting DataLab to PostgreSQL databases, as well as other SQL databases, is extremely easy. DataLab allows you to connect to data sources in a secure way, while you can seamlessly continue your data analysis with Python or R. You just need to create an integration, following a straightforward, no-code process, where you will need to enter your connection credentials. 
+
+The image below shows how to create a PostgreSQL integration. 
+
+DataCamp course integration form
+
+Finally, If you want to try the integration but don't have a PostgreSQL database to connect to, you can just use one of our available sample PostgreSQL databases!
+
+Curious about DataCamp DataLab? Check out this article to know more about this next-generation notebook for data science.
+
+Conclusion
+Nice work! In this tutorial, you got acquainted with PostgreSQL and learned how to manage databases without leaving Python, using the psycopg2 package. But this is just the beginning of the journey. SQL is one of the most widely-used programming languages in data science. It’s also fairly easy to learn, so you have no excuse.  
+
+Fortunately, Datacamp gets you covered. Here are some resources that might help you to become fluent in PostgreSQL and SQL in general:
+
+Beginner Introductions to PostgreSQL Tutorial
+Creating PostgreSQL Databases Course
+Improving Query Performance in PostgreSQL Course
+Managing Databases in SQL Course
+Functions for Manipulating Data in PostgreSQL Course
