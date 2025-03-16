@@ -1,6 +1,11 @@
 # Configure_PostgreSQL_for_Python
-configuration de PostgreSQL sous Python
+Créer, se connecter et gérer des bases de données PostgreSQL à l’aide du package psycopg2 de Python.
 
+Installation de PostgreSQL sur son poste
+
+Télécharger et installer PostgreSQL sur son poste :
+
+https://www.postgresql.org/download/
 
 Installation de la librairie psycopg2
 
@@ -28,3 +33,17 @@ conn = psycopg2.connect(database = "postgresql",  # nom par defaut
                         password = "password,
                         port = 5432) # port par defaut
 ```
+
+
+
+
+
+
+Annexes :
+
+
+- Ressources SQL sur le site officiel de PostgreSQL :
+https://www.postgresql.org/about/
+
+-Guide du débutant sur PostgreSQL : 
+https://www.datacamp.com/tutorial/beginners-introduction-postgresql
