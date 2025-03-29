@@ -212,5 +212,5 @@ https://www.psycopg.org/docs/install.html#install-from-source
 - Ressources SQL sur le site officiel de PostgreSQL :
 https://www.postgresql.org/about/
 
--Guide du débutant sur PostgreSQL : 
+- Guide du débutant sur PostgreSQL : 
 https://www.datacamp.com/tutorial/beginners-introduction-postgresql
